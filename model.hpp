@@ -5,88 +5,173 @@
 #include <vector>
 #include <random>
 #include <map>
+#include "rand.hpp"
 
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-class Order
-{
-  private:
-    const unsigned int size_;
-    unsigned int *order_;
+class Order {
+private:
+    const int size_;
+    int *order_;
 
-  public:
-    Order(const unsigned int size) : size_(size)
-    {
-        order_ = new unsigned int[size];
+public:
+    Order(const int size) : size_(size) {
+        order_ = new int[size];
 
-        for (unsigned int i = 0; i < size_; i++)
+        for (int i = 0; i < size_; i++)
             order_[i] = i;
     }
 
-    Order(const Order &from) : size_(from.size_)
-    {
-        order_ = new unsigned int[size_];
-        for (unsigned int i = 0; i < size_; i++)
+    Order(const Order &from) : size_(from.size_) {
+        order_ = new int[size_];
+        for (int i = 0; i < size_; i++)
             order_[i] = from.order_[i];
     }
 
-    auto shuffle()
-    {
+    auto shuffle() {
         std::srand(std::time(nullptr));
 
-        auto random_variable = std::rand();
+        for (int i = size_ - 1; i >= 0; i--) {
+            auto j = Random::random_from_range(0, i);
+            if (i == j)
+                continue;
 
-        
+            // auto temp = order_[i];
+            // order_[i] = order_[j];
+            // order_[j] = temp;
+            std::swap(order_[i], order_[j]);
+        }
     }
 
-    auto begin()
-    {
+    auto begin() {
         return order_;
     }
 
-    auto end()
-    {
+    auto end() {
         return order_ + size_;
     }
+
+    const auto begin() const {
+        return order_;
+    }
+
+    const auto end() const {
+        return order_ + size_;
+    }
+
 
     ~Order() { delete[] order_; }
 };
 
-auto make_order(unsigned int length)
-{
+auto make_random_order(int length) {
     Order o(length);
     o.shuffle();
     return o;
 }
 
-class Solution
-{
-  private:
+class Solution {
+private:
+    /* Problem data */
+    std::map<int, int> durations_;
+    static const int pause = 2;
+
+    const int teachers_;
+    const int students_;
+
+    /* Solution data */
     Order teacher_order;
-    std::vector<Order> chromosomes;
-    std::map<unsigned int, unsigned int> durations_;
+    std::vector <Order> chromosomes;
 
-    const unsigned int teachers_;
-    const unsigned int students_;
+    /* Generated solution data */
+    std::map<int, std::map<int, int>> hours_teachers;
 
-  public:
-    Solution(const unsigned int teachers, const unsigned int students, const unsigned int *durations)
-        : teachers_(teachers), students_(students),
-          teacher_order(make_order(teachers))
-    {
-        for (unsigned int i = 0; i < teachers_; i++)
-            durations_.insert(i, durations[i]);
+public:
+    Solution(const int teachers, const int students, const int *durations)
+            : teachers_(teachers), students_(students),
+              teacher_order(make_random_order(teachers)) {
+        for (int i = 0; i < teachers; i++) {
+            chromosomes.push_back(make_random_order(students));
+            durations_.insert(std::pair(i, durations[i]));
+
+            hours_teachers.insert(std::make_pair(i, std::map<int, int>()));
+            for (int j = 0; j < students; j++)
+                hours_teachers.at(i).insert(std::pair(j, -1));
+        }
     }
 
-    auto makespan()
+    auto print_solution() const
     {
-        for (const auto teacher_id : teacher_order)
-        {
-            std::cout << "Teacher " << teacher_id << std::endl;
-            for (const auto &student_id : chromosomes.at(teacher_id))
-                std::cout << "\tStudent " << student_id << std::endl;
+        std::cout << "Solution data: " << std::endl;
+        std::cout << "Base chromosome data: ";
+        for (auto const & x : teacher_order)
+            std::cout << x << " ";
+        std::cout << std::endl;
+
+        auto i = int{0};
+        std::cout << "Chromosomes: " << std::endl;
+        for(auto const & chromosome : chromosomes) {
+            ++i;
+            std::cout << "  " << i << ". ";
+            for (auto const &x : chromosome)
+                std::cout << x << " ";
+            std::cout << std::endl;
         }
+    }
+
+    auto find_hours_for_student(int student) {
+        std::map<int, int> hours;
+        for (const auto &teacherTimetablePair : hours_teachers) {
+            const auto teacher = teacherTimetablePair.first;
+            const auto timetable = teacherTimetablePair.second;
+
+            const auto hour = timetable.at(student);
+
+            hours.insert(std::pair(hour, teacher));
+        }
+
+        return hours;
+    }
+
+    auto student_is_available(int student, int time, int duration) {
+        auto hours_student = find_hours_for_student(student);
+        for (const auto &entry : hours_student) {
+            auto entryHour = entry.first;
+            auto entryTeacher = entry.second;
+
+            if (entryHour == -1)
+                continue;
+
+            if (time <= entryHour && time + duration + pause > entryHour)
+                return false;
+            else if (time >= entryHour && entryHour + durations_[entryTeacher] + pause > time)
+                return false;
+
+            return true;
+        }
+    }
+
+    auto teacher_is_available(int teacher, int time, int duration) {
+        auto hours = hours_teachers.at(teacher);
+        for (const auto &entry : hours) {
+            auto entryHour = entry.second;
+
+            if (entryHour == -1)
+                continue;
+
+            if (time <= entryHour && time + durations_.at(teacher) > entryHour)
+                return false;
+            else if (entryHour <= time && entryHour + durations_.at(teacher) > time)
+                return false;
+
+            return true;
+        }
+    }
+
+    auto generate() {
+    }
+
+    auto makespan() {
     }
 };
 

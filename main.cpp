@@ -2,11 +2,13 @@
 #include "logger.hpp"
 #include "model.hpp"
 
-const unsigned int teachers = 5;
-const unsigned int students = 4;
-const unsigned int durations[] = {1,2,3,4,5};
+const int teachers = 5;
+const int students = 4;
+const int durations[] = {1, 2, 3, 4, 5};
 
-auto main() -> int { 
+auto main() -> int {
     Solution S(teachers, students, durations);
+    S.print_solution();
+    S.generate();
     return 0; 
 }
