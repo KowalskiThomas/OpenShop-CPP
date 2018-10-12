@@ -44,6 +44,15 @@ public:
         }
     }
 
+    auto perturbate() {
+        auto index = Random::random_from_range(0, size_ - 1);
+
+        if (index < size_ - 1)
+            std::swap(order_[index], order_[index + 1]);
+        else
+            std::swap(order_[index], order_[0]);
+    }
+
     auto begin() {
         return order_;
     }
@@ -100,17 +109,31 @@ public:
         }
     }
 
-    auto print_solution() const
-    {
+    Solution(const Solution &from) : teachers_(from.teachers_), students_(from.students_),
+                                     teacher_order(from.teacher_order), chromosomes(from.chromosomes) {
+        std::cout << "Solution copied" << std::endl;
+    }
+
+    auto perturbate() {
+        auto index = Random::random_from_range(0, chromosomes.size());
+
+        if (index < chromosomes.size())
+            chromosomes[index].perturbate();
+        else
+            // Perturbate teacher order
+            teacher_order.perturbate();
+    }
+
+    auto print_solution() const {
         std::cout << "Solution data: " << std::endl;
         std::cout << "Base chromosome data: ";
-        for (auto const & x : teacher_order)
+        for (auto const &x : teacher_order)
             std::cout << x << " ";
         std::cout << std::endl;
 
         auto i = int{0};
         std::cout << "Chromosomes: " << std::endl;
-        for(auto const & chromosome : chromosomes) {
+        for (auto const &chromosome : chromosomes) {
             ++i;
             std::cout << "  " << i << ". ";
             for (auto const &x : chromosome)
@@ -172,6 +195,7 @@ public:
     }
 
     auto makespan() {
+        return 0;
     }
 };
 
