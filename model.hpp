@@ -94,6 +94,7 @@ private:
 
     /* Generated solution data */
     std::map<int, std::map<int, int>> hours_teachers;
+    std::map<int, std::map<int, int>> hours_students;
 
 public:
     Solution(const int teachers, const int students, const int *durations)
@@ -174,7 +175,8 @@ public:
         }
     }
 
-    auto teacher_is_available(int teacher, int time, int duration) {
+    auto teacher_is_available(int teacher, int time) {
+        auto duration = durations_[teacher];
         auto hours = hours_teachers.at(teacher);
         for (const auto &entry : hours) {
             auto entryHour = entry.second;
@@ -182,19 +184,66 @@ public:
             if (entryHour == -1)
                 continue;
 
-            if (time <= entryHour && time + durations_.at(teacher) > entryHour)
+            if (time <= entryHour && time + duration > entryHour)
                 return false;
-            else if (entryHour <= time && entryHour + durations_.at(teacher) > time)
+            else if (entryHour <= time && entryHour + duration > time)
                 return false;
 
             return true;
         }
     }
 
+    auto print_timetable()
+    {
+        for (int i = 0; i < teachers_; i++) {
+            std::cout << "Teacher " << i << std::endl;
+            for (int j = 0; j < students_; j++)
+                std::cout << "Student " << j << " : " << hours_teachers.at(i).at(j) << std::endl;
+        }
+    }
+
     auto generate() {
+        for(int i = 0; i < teachers_; i++) {
+            hours_teachers.insert(std::pair(i, std::map<int, int>()));
+            for (int j = 0; j < students_; j++)
+                hours_teachers.at(i).insert(std::pair(j, -1));
+        }
+
+        print_timetable();
+
+        for (auto const j : teacher_order)
+        {
+            bool all_set = false;
+            auto t = 0;
+            while (!all_set)
+            {
+                all_set = std::all_of(
+                        begin(hours_teachers.at(j)),
+                        end(hours_teachers.at(j)),
+                        [](std::pair<int, int> x) {
+                            return x.second > -1;
+                        });
+                auto set = false;
+                for(const int student : chromosomes[j])
+                {
+                    if (hours_teachers.at(j).at(student) > -1)
+                        continue;
+
+                    if (student_is_available(student, t, durations_[j]))
+                    {
+                        if (teacher_is_available(j, t))
+                        {
+                            // TODO
+                        }
+                    }
+                }
+        }
+        }
     }
 
     auto makespan() {
+        generate();
+
         return 0;
     }
 };
