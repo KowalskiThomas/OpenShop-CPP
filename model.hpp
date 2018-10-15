@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <map>
+#include <cassert>
 #include "rand.hpp"
 
 #ifndef MODEL_HPP
@@ -25,31 +26,16 @@ public:
 
     Order(const Order &from) : size_(from.size_) {
         order_ = new int[size_];
+
         for (int i = 0; i < size_; i++)
             order_[i] = from.order_[i];
     }
 
-/*
     auto shuffle() {
-        for (int i = size_ - 1; i > 0; i--) {
-            int j = Random::random_from_range(0, i - 1);
-            std::cout << " i = " << i << "  j = " << j << std::endl;
-            if (i == j)
-                continue;
+        std::random_device random_dev;
+        std::mt19937 generator(random_dev());
 
-            auto temp = order_[i];
-            order_[i] = order_[j];
-            order_[j] = temp;
-            // std::swap(order_[i], order_[j]);
-        }
-    }
-*/
-
-    auto shuffle() {
-    std::random_device random_dev;
-    std::mt19937       generator(random_dev());
-
-    std::shuffle(order_, order_ + size_, generator);
+        std::shuffle(order_, order_ + size_, generator);
     }
 
     auto print() {
@@ -102,6 +88,15 @@ public:
         return true;
     }
 
+    auto operator=(const Order& other)
+    {
+        assert(other.size_ == size_);
+
+        std::copy(other.begin(), other.end(), this->begin());
+
+        return *this;
+    }
+
 
     ~Order() { delete[] order_; }
 };
@@ -145,11 +140,20 @@ public:
         initialize_maps();
     }
 
-    Solution(const Solution &from) : teachers_(from.teachers_), students_(from.students_),
+    Solution(const Solution &from) : durations_(from.durations_), teachers_(from.teachers_), students_(from.students_),
                                      teacher_order(from.teacher_order), chromosomes(from.chromosomes),
                                      generated_(false) {
         initialize_maps();
         std::cout << "Solution copied" << std::endl;
+    }
+
+    auto operator=(const Solution& o)
+    {
+        generated_ = false;
+        initialize_maps();
+        teacher_order = o.teacher_order;
+        std::copy(begin(o.chromosomes), end(o.chromosomes), begin(chromosomes));
+        return *this;
     }
 
     void initialize_maps() {
@@ -158,8 +162,7 @@ public:
                 hours_teachers.insert(std::make_pair(i, std::map<int, int>()));
                 for (int j = 0; j < students_; j++)
                     hours_teachers.at(i).insert(std::pair(j, -1));
-            }
-            else
+            } else
                 for (int j = 0; j < students_; j++)
                     hours_teachers.at(i)[j] = -1;
 
@@ -170,8 +173,7 @@ public:
                 hours_students.insert(std::make_pair(i, std::map<int, int>()));
                 for (int j = 0; j < teachers_; j++)
                     hours_students[i].insert(std::pair(j, -1));
-            }
-            else
+            } else
                 for (int j = 0; j < students_; j++)
                     hours_students[i][j] = -1;
         }
@@ -201,7 +203,7 @@ public:
         generated_ = false;
     }
 
-    auto print_solution() const {
+    void print_solution() const {
         std::cout << "Solution data: " << std::endl;
         std::cout << "Base chromosome data: ";
         for (auto const &x : teacher_order)
@@ -269,9 +271,9 @@ public:
         return true;
     }
 
-    auto generate() {
-//        if (generated_)
-//            return;
+    void generate() {
+        if (generated_)
+            return;
 
         initialize_maps();
 
@@ -314,9 +316,11 @@ public:
                 }
             }
         }
+
+        generated_ = true;
     }
 
-    auto print_timetable() {
+    void print_timetable() {
         generate();
 
         for (int i = 0; i < teachers_; i++) {
@@ -348,8 +352,7 @@ public:
         return max_end;
     }
 
-    const auto& get_schedule()
-    {
+    const auto &get_schedule() {
         generate();
         return hours_teachers;
     }
