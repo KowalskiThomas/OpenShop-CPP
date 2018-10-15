@@ -4,9 +4,9 @@
 #include "logger.hpp"
 #include "model.hpp"
 
-const int teachers = 5;
-const int students = 4;
-const int durations[] = {1, 2, 3, 4, 5};
+#include "config.hpp"
+
+#include "serializer.hpp"
 
 Solution& satisfies_criterion(Solution& original, Solution& perturbated, const double T, const double constant)
 {
@@ -26,17 +26,7 @@ Solution& satisfies_criterion(Solution& original, Solution& perturbated, const d
 
 auto main() -> int {
     Solution S(teachers, students, durations);
-
-    auto S2 = S;
-
-    S.print_solution();
-    std::cout << "Perturbation" << std::endl;
-    S.perturbate();
-    S.print_solution();
-    std::cout << "And for S2" << std::endl;
-    S2.print_solution();
-
-    satisfies_criterion(S2, S, 23, 7);
+    Serializer serializer(S);
 
     return 0; 
 }
