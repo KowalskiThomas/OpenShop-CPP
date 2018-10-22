@@ -21,7 +21,7 @@ auto test_solution() {
 }
 
 auto test_shuffle() {
-    auto o = Order(5);
+    auto o = Order(9);
     auto sum = 0;
 
     for (auto const i : o)
@@ -84,13 +84,13 @@ auto test_random()
         if (test < min || test > max)
             std::cout << "error" << std::endl;
     }
+    std::cout << "Tests random OK" << std::endl;
 }
 
 int main(void) {
-    test_shuffle();
-    test_perturbate();
-    test_solution();
-    test_generation();
+    // test_shuffle();
+    // test_perturbate();
+    // test_solution();
+    // test_generation();
     test_random();
-
 }

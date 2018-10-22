@@ -9,27 +9,22 @@ private:
 public:
     static bool started_;
 
-        static auto random_from_range(int min, int max)
-        {
-            if (!started_) {
-                std::srand(std::time(nullptr));
-                started_ = true;
-            }
+        // static int random_from_range(int min, int max)
+        // {
+        //     static std::random_device rd;
+        //     static auto rng = std::mt19937(rd());
+        //     static auto uni = std::uniform_int_distribution<int>(min, max);
 
-            static auto rd = std::random_device();
-            static auto rng = std::mt19937(rd());
-            static auto uni = std::uniform_int_distribution<int>(min, max);
+        //     return uni(rng);
+        // }
 
-            return uni(rng);
+        static int random_from_range(int min, int max)
+        {   
+            return min + (rand() % (max - min));
         }
 
-        static auto random()
+        static double random()
         {
-            if (!started_) {
-                std::srand(std::time(nullptr));
-                started_ = true;
-            }
-
             static std::random_device rd;
             static std::mt19937 rng(rd());
 
@@ -38,7 +33,5 @@ public:
             return uni(rng);
         }
 };
-
-bool Random::started_ = false;
 
 #endif
