@@ -13,3 +13,6 @@ opt:
 valgrind: compile opt
 	valgrind --leak-check=full ./edt.opt
 	valgrind --leak-check=full ./edt
+
+clean:
+	rm -rf edt edt.opt *.out
