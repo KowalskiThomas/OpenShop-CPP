@@ -18,7 +18,7 @@ public:
         //     return uni(rng);
         // }
 
-        static int random_from_range(int min, int max)
+        static int random_from_range(const int& min, const int& max)
         {   
             return min + (rand() % (max - min));
         }

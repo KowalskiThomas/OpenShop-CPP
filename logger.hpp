@@ -1,20 +1,30 @@
 #include <iostream>
 #include <string>
 
-class Logger {
+class Logger
+{
 private:
-  static auto write(std::string s) { std::cout << s << std::endl; }
+  static auto write(std::string s)
+  {
+    // std::cout << s << std::endl;
+  }
 
 public:
-  static auto warn(std::string tag, std::string message) {
+  static auto warn(std::string tag, std::string message)
+  {
     Logger::write("Warning: [" + tag + "] " + message);
   }
 
-  static auto info(std::string tag, std::string message) {
+  static auto info(std::string tag, std::string message)
+  {
     Logger::write("Info:    [" + tag + "] " + message);
   }
 
-  enum class level { _INFO, _WARNING };
+  enum class level
+  {
+    _INFO,
+    _WARNING
+  };
 
   static level i;
 };

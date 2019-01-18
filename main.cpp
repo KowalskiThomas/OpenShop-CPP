@@ -16,7 +16,7 @@ enum MetropolisCriterionBehaviour
     KeepNew
 };
 
-auto satisfies_criterion(Solution &original, Solution &perturbated, const double T, const double constant)
+auto satisfies_criterion(Solution &original, Solution &perturbated, const double& T, const double& constant)
 {
     auto random = Random::random();
     auto delta_makespan = perturbated.makespan() - original.makespan();
@@ -35,7 +35,7 @@ auto satisfies_criterion(Solution &original, Solution &perturbated, const double
         return MetropolisCriterionBehaviour::KeepNew;
 }
 
-auto max = [](const int a, const int b) { return a > b ? a : b; };
+auto max = [](const int& a, const int& b) { return a > b ? a : b; };
 
 auto solve_problem() -> int
 {
@@ -46,7 +46,7 @@ auto solve_problem() -> int
 
     auto f = [](int t) { return max(0, t - 10); };
     auto T = 1000;
-    auto K = 2.5;
+    auto K = 100;
     auto begin_time_optimize = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
     while (T > 0)
     {
@@ -63,9 +63,9 @@ auto solve_problem() -> int
     Serializer serializer(S);
     auto end_time_serialize = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
-    std::cout << "Optimization time: " << (end_time_optimize - begin_time_optimize) << std::endl;
-    std::cout << "Serialization time: " << (end_time_serialize - begin_time_serialize) << std::endl;
-    std::cout << S.makespan() << std::endl;
+    // std::cout << "Optimization time: " << (end_time_optimize - begin_time_optimize) << std::endl;
+    // std::cout << "Serialization time: " << (end_time_serialize - begin_time_serialize) << std::endl;
+    // std::cout << S.makespan() << std::endl;
 
     return S.makespan();
 }
@@ -80,7 +80,7 @@ auto main() -> int
             best = makespan;
     }
 
-    std::cout << "Best : " <<  best << std::endl;
+    // std::cout << "Best : " <<  best << std::endl;
 
     return 0;
 }

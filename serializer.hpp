@@ -69,6 +69,6 @@ public:
             result += "\n";
         }
 
-        std::cout << result << std::endl;
+        // std::cout << result << std::endl;
     }
 };

@@ -19,7 +19,7 @@ class Order
     int *order_;
 
   public:
-    Order(const int size) : size_(size)
+    Order(const int &size) : size_(size)
     {
         order_ = new int[size];
 
@@ -46,13 +46,16 @@ class Order
     auto print()
     {
         for (auto i = 0; i < size_; i++)
-            std::cout << order_[i] << "; ";
-        std::cout << std::endl;
+            ;
+        // std::cout << order_[i] << ";
+        // std::cout << std::endl;
     }
 
     auto perturbate()
     {
-        auto index = Random::random_from_range(0, size_ - 2);
+        auto max = size_ - 2;
+        auto min = 0;
+        auto index = Random::random_from_range(min, max);
 
         int temp;
         if (index < size_ - 1)
@@ -70,7 +73,7 @@ class Order
             // std::swap(order_[index], order_[0]);
         }
 
-        // std::cout << "Perturbated Order: Size = " << size_ << " Index = " << index << ", temp = " << temp << std::endl;
+        // // std::cout << "Perturbated Order: Size = " << size_ << " Index = " << index << ", temp = " << temp << std::endl;
     }
 
     auto begin()
@@ -137,7 +140,7 @@ std::ostream &operator<<(std::ostream &s, const Order &o)
     return s;
 }
 
-auto make_random_order(const int length)
+auto make_random_order(const int &length)
 {
     Order o(length);
     o.shuffle();
@@ -166,15 +169,15 @@ class Solution
     std::map<int, std::map<int, int>> hours_students;
 
   public:
-    Solution(const int teachers, const int students, const int *durations)
+    Solution(const int &teachers, const int &students, const int *durations)
         : teachers_(teachers), students_(students),
           teacher_order(make_random_order(teachers)), generated_(false)
     {
 
-        for (int i = 0; i < teachers; i++)
+        for (auto i = 0; i < teachers; i++)
         {
             chromosomes.push_back(make_random_order(students));
-            std::cout << chromosomes[chromosomes.size() - 1] << std::endl;
+            // std::cout << chromosomes[chromosomes.size() - 1] << std::endl;
             durations_.insert(std::pair<int, int>(i, durations[i]));
         }
 
@@ -186,7 +189,7 @@ class Solution
                                      generated_(false)
     {
         initialize_maps();
-        // std::cout << "Solution copied" << std::endl;
+        // // std::cout << "Solution copied" << std::endl;
     }
 
     auto operator=(const Solution &o)
@@ -229,7 +232,7 @@ class Solution
 
     auto operator==(const Solution &o)
     {
-        std::cout << "Operator==" << std::endl;
+        // std::cout << "Operator==" << std::endl;
         if (teacher_order == o.teacher_order)
             return false;
 
@@ -247,7 +250,9 @@ class Solution
     auto perturbate()
     {
         // this->print_solution();
-        auto index = Random::random_from_range(0, chromosomes.size());
+        auto min = 0;
+        const int max = chromosomes.size();
+        auto index = Random::random_from_range(min, max);
 
         auto before = &teacher_order;
         auto after = &teacher_order;
@@ -267,36 +272,36 @@ class Solution
         }
 
         generated_ = false;
-        // std::cout << "Perturbation over (perturbated " << index << ")" << std::endl;
-        // std::cout << "B: " << *before << std::endl;
-        // std::cout << "A: " << *after << std::endl;
+        // // std::cout << "Perturbation over (perturbated " << index << ")" << std::endl;
+        // // std::cout << "B: " << *before << std::endl;
+        // // std::cout << "A: " << *after << std::endl;
         // this->print_solution();
-        // std::cout << std::endl;
+        // // std::cout << std::endl;
         // std::string test;
         // std::cin >> test;
     }
 
     void print_solution() const
     {
-        std::cout << "Solution data: " << std::endl;
-        std::cout << "Base chromosome data: ";
+        // std::cout << "Solution data: " << std::endl;
+        // std::cout << "Base chromosome data: ";
         for (auto const &x : teacher_order)
-            std::cout << x << " ";
-        std::cout << std::endl;
+            // std::cout << x << " ";
+            // std::cout << std::endl;
 
-        auto i = int{0};
-        std::cout << "Chromosomes: " << std::endl;
+            auto i = int{0};
+        // std::cout << "Chromosomes: " << std::endl;
         for (auto const &chromosome : chromosomes)
         {
-            ++i;
-            std::cout << "  " << i << ". ";
+            // ++i;
+            // std::cout << "  " << i << ". ";
             for (auto const &x : chromosome)
-                std::cout << x << " ";
-            std::cout << std::endl;
+                ; // std::cout << x << " ";
+            // std::cout << std::endl;
         }
     }
 
-    auto find_hours_for_student(int student)
+    auto find_hours_for_student(const int &student)
     {
         std::map<int, int> hours;
         for (const auto &teacherTimetablePair : hours_teachers)
@@ -312,7 +317,7 @@ class Solution
         return hours;
     }
 
-    auto student_is_available(int student, int time, int duration)
+    auto student_is_available(const int &student, const int &time, const int &duration)
     {
         auto hours_student = find_hours_for_student(student);
         for (const auto &entry : hours_student)
@@ -332,7 +337,7 @@ class Solution
         return true;
     }
 
-    auto teacher_is_available(int teacher, int time)
+    auto teacher_is_available(const int& teacher, const int& time)
     {
         auto duration = durations_[teacher];
         auto hours = hours_teachers.at(teacher);
@@ -356,7 +361,7 @@ class Solution
     {
         if (generated_)
         {
-            // std::cout << "Solution already generated. Exiting." << std::endl;
+            // // std::cout << "Solution already generated. Exiting." << std::endl;
             return;
         }
 
@@ -377,7 +382,7 @@ class Solution
             auto t = 0;
             while (!all_set)
             {
-                // std::cout << "People left, t = " << t << std::endl;
+                // // std::cout << "People left, t = " << t << std::endl;
                 all_set = true;
                 for (auto student_hour_pair : hours_teachers[j])
                     if (student_hour_pair.second == -1)
@@ -397,11 +402,11 @@ class Solution
                 auto set = false;
                 for (auto const student : chromosomes[j])
                 {
-                    // std::cout << "Chromosome: " << chromosomes[j] << std::endl;
+                    // // std::cout << "Chromosome: " << chromosomes[j] << std::endl;
                     /* Student already placed */
                     if (hours_teachers[j][student] > -1)
                     {
-                        // std::cout << "Student " << student << " already placed for teacher " << j << " at " << hours_teachers[j][student] << std::endl;
+                        // // std::cout << "Student " << student << " already placed for teacher " << j << " at " << hours_teachers[j][student] << std::endl;
                         continue;
                     }
 
@@ -416,12 +421,12 @@ class Solution
                         }
                         else
                         {
-                            // std::cout << "Teacher " << j << " is not available at " << t << " for " << durations_[j] << " units" << std::endl;
+                            // // std::cout << "Teacher " << j << " is not available at " << t << " for " << durations_[j] << " units" << std::endl;
                         }
                     }
                     else
                     {
-                        // std::cout << "Student " << student << "is not available at " << t << " for " << durations_[j] << " units." << std::endl;
+                        // // std::cout << "Student " << student << "is not available at " << t << " for " << durations_[j] << " units." << std::endl;
                     }
                 }
 
@@ -441,9 +446,10 @@ class Solution
 
         for (int i = 0; i < teachers_; i++)
         {
-            // std::cout << "Teacher " << i << " (duration: " << durations_[i] << ")" << std::endl;
-            for (int j = 0; j < students_; j++) {
-                // std::cout << "  Student " << j << " : " << hours_teachers.at(i).at(j) << std::endl;
+            // // std::cout << "Teacher " << i << " (duration: " << durations_[i] << ")" << std::endl;
+            for (int j = 0; j < students_; j++)
+            {
+                // // std::cout << "  Student " << j << " : " << hours_teachers.at(i).at(j) << std::endl;
             }
         }
     }
