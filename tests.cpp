@@ -88,9 +88,9 @@ auto test_random()
 }
 
 int main(void) {
-    // test_shuffle();
-    // test_perturbate();
-    // test_solution();
-    // test_generation();
+    test_shuffle();
+    test_perturbate();
+    test_solution();
+    test_generation();
     test_random();
 }
