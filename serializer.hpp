@@ -23,7 +23,7 @@ private:
     }*/
 
     template<typename A, typename B>
-    std::pair <B, A> flip_pair(const std::pair <A, B> &p) {
+    static std::pair <B, A> flip_pair(const std::pair <A, B> &p) {
         return std::pair<B, A>(p.second, p.first);
     }
 
