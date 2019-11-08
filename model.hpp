@@ -6,8 +6,9 @@
 #include <random>
 #include <map>
 #include <cassert>
-#include "rand.hpp"
 #include <memory>
+
+#include "rand.hpp"
 
 #ifndef MODEL_HPP
 #define MODEL_HPP

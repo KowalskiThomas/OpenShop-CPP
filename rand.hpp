@@ -4,11 +4,7 @@
 #include <random>
 
 class Random {
-private:
-
 public:
-    static bool started_;
-
         // static int random_from_range(int min, int max)
         // {
         //     static std::random_device rd;
@@ -19,7 +15,14 @@ public:
         // }
 
         static int random_from_range(int min, int max)
-        {   
+        {
+            static bool started = false;
+	    if (!started)
+	    {
+	    	srand(time(nullptr));
+		started = true;
+	    }
+
             return min + (rand() % (max - min));
         }
 
